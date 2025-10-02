@@ -1,23 +1,42 @@
 {
-  "name": "backend-api",
-  "version": "0.1.0",
+  "name": "achimpa-ai-backend",
+  "version": "2.0.0",
   "private": true,
+  "description": "Achimpa.ai Backend API with Groq Integration",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "export": "next export",
+    "deploy": "vercel --prod"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "ai",
+    "chat",
+    "groq",
+    "nextjs",
+    "api",
+    "achimpa"
+  ],
   "dependencies": {
+    "@ai-sdk/groq": "^2.0.22",
+    "@google/generative-ai": "^0.24.1",
+    "ai": "^5.0.59",
+    "expo-linear-gradient": "^15.0.7",
+    "groq-sdk": "^0.33.0",
+    "next": "15.5.4",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.5.4"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4"
   }
 }

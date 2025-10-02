@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achimpa.ai API Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .response {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 14px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        .success { background: rgba(76, 175, 80, 0.3); }
+        .error { background: rgba(244, 67, 54, 0.3); }
+        .loading { background: rgba(255, 193, 7, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Achimpa.ai API Test</h1>
+        
+        <div class="test-section">
+            <h3>📡 Basic API Test</h3>
+            <button onclick="testBasicAPI()">Test GET /api/hello</button>
+            <div id="basic-response" class="response"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>👋 Personalized Greeting</h3>
+            <div class="input-group">
+                <input type="text" id="name-input" placeholder="Enter your name" value="Nivesh">
+            </div>
+            <button onclick="testPersonalizedAPI()">Test Personalized Greeting</button>
+            <div id="personalized-response" class="response"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🤖 Chat Buddy Info</h3>
+            <div class="input-group">
+                <select id="chat-select" style="width: 100%; padding: 10px; border: none; border-radius: 5px;">
+                    <option value="1">Nivja (Cheerful & Helpful)</option>
+                    <option value="2">Asti (Energetic & Creative)</option>
+                    <option value="3">Tahsu (Thoughtful & Analytical)</option>
+                    <option value="4">Adi (Professional & Efficient)</option>
+                    <option value="5">Anim (Playful & Imaginative)</option>
+                </select>
+            </div>
+            <button onclick="testChatBuddyAPI()">Get Chat Buddy Info</button>
+            <div id="chatbuddy-response" class="response"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>💬 Send Chat Message</h3>
+            <div class="input-group">
+                <textarea id="message-input" placeholder="Type your message here..." rows="3">Hello! How are you today?</textarea>
+            </div>
+            <div class="input-group">
+                <input type="text" id="username-input" placeholder="Your name" value="Tester">
+            </div>
+            <button onclick="testChatAPI()">Send Message</button>
+            <div id="chat-response" class="response"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🤖 Google AI Integration</h3>
+            <div class="input-group">
+                <textarea id="google-message-input" placeholder="Ask Google AI something..." rows="3">Tell me a fun fact about artificial intelligence!</textarea>
+            </div>
+            <div class="input-group">
+                <select id="google-chat-select" style="width: 100%; padding: 10px; border: none; border-radius: 5px;">
+                    <option value="1">Nivja (Cheerful & Helpful)</option>
+                    <option value="2">Asti (Energetic & Creative)</option>
+                    <option value="3">Tahsu (Thoughtful & Analytical)</option>
+                    <option value="4">Adi (Professional & Efficient)</option>
+                    <option value="5">Anim (Playful & Imaginative)</option>
+                </select>
+            </div>
+            <button onclick="testGoogleAPI()">Ask Google AI</button>
+            <div id="google-response" class="response"></div>
+        </div>
+
+        <div id="status" class="status" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+
+        function showStatus(message, type = 'loading') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        async function testBasicAPI() {
+            showStatus('Testing basic API...', 'loading');
+            try {
+                const response = await fetch(`${API_BASE}/api/hello`);
+                const data = await response.json();
+                document.getElementById('basic-response').textContent = JSON.stringify(data, null, 2);
+                showStatus('✅ Basic API test successful!', 'success');
+            } catch (error) {
+                document.getElementById('basic-response').textContent = `Error: ${error.message}`;
+                showStatus('❌ Basic API test failed!', 'error');
+            }
+        }
+
+        async function testPersonalizedAPI() {
+            const name = document.getElementById('name-input').value;
+            showStatus('Testing personalized greeting...', 'loading');
+            try {
+                const response = await fetch(`${API_BASE}/api/hello?name=${encodeURIComponent(name)}`);
+                const data = await response.json();
+                document.getElementById('personalized-response').textContent = JSON.stringify(data, null, 2);
+                showStatus('✅ Personalized greeting test successful!', 'success');
+            } catch (error) {
+                document.getElementById('personalized-response').textContent = `Error: ${error.message}`;
+                showStatus('❌ Personalized greeting test failed!', 'error');
+            }
+        }
+
+        async function testChatBuddyAPI() {
+            const chatId = document.getElementById('chat-select').value;
+            showStatus('Getting chat buddy info...', 'loading');
+            try {
+                const response = await fetch(`${API_BASE}/api/hello?chatId=${chatId}`);
+                const data = await response.json();
+                document.getElementById('chatbuddy-response').textContent = JSON.stringify(data, null, 2);
+                showStatus('✅ Chat buddy info retrieved!', 'success');
+            } catch (error) {
+                document.getElementById('chatbuddy-response').textContent = `Error: ${error.message}`;
+                showStatus('❌ Chat buddy info test failed!', 'error');
+            }
+        }
+
+        async function testChatAPI() {
+            const message = document.getElementById('message-input').value;
+            const userName = document.getElementById('username-input').value;
+            const chatId = document.getElementById('chat-select').value;
+            
+            showStatus('Sending chat message...', 'loading');
+            try {
+                const response = await fetch(`${API_BASE}/api/hello`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        chatId: parseInt(chatId),
+                        userName: userName
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('chat-response').textContent = JSON.stringify(data, null, 2);
+                showStatus('✅ Chat message sent successfully!', 'success');
+            } catch (error) {
+                document.getElementById('chat-response').textContent = `Error: ${error.message}`;
+                showStatus('❌ Chat message test failed!', 'error');
+            }
+        }
+
+        async function testGoogleAPI() {
+            const message = document.getElementById('google-message-input').value;
+            const chatId = document.getElementById('google-chat-select').value;
+            
+            showStatus('Asking Google AI...', 'loading');
+            try {
+                const response = await fetch(`${API_BASE}/api/google-api`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        chatId: parseInt(chatId),
+                        userName: 'WebTester'
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('google-response').textContent = JSON.stringify(data, null, 2);
+                
+                if (data.success && data.data.source === 'google-gemini') {
+                    showStatus('✅ Google AI responded successfully!', 'success');
+                } else if (data.success && data.data.source === 'fallback') {
+                    showStatus('⚠️ Using fallback response (Google API issue)', 'error');
+                } else {
+                    showStatus('❌ Google AI test failed!', 'error');
+                }
+            } catch (error) {
+                document.getElementById('google-response').textContent = `Error: ${error.message}`;
+                showStatus('❌ Google AI test failed!', 'error');
+            }
+        }
+
+        // Auto-test basic API on page load
+        window.onload = () => {
+            setTimeout(testBasicAPI, 1000);
+        };
+    </script>
+</body>
+</html>
