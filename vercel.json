@@ -1,21 +1,6 @@
 {
   "version": 2,
   "name": "achimpa-ai-backend",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    }
-  ],
-  "env": {
-    "GROQ_API_KEY": "@groq-api-key"
-  },
   "functions": {
     "src/app/api/**/*.js": {
       "maxDuration": 30
@@ -39,5 +24,7 @@
         }
       ]
     }
-  ]
+  ],
+  "regions": ["iad1"],
+  "framework": "nextjs"
 }
